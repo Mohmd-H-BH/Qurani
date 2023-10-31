@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Qurani</string>
+    <string name="msgCheckInternetConnection">Check your internet connection</string>
 </resources>

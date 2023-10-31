@@ -24,6 +24,7 @@ import com.mhmdbh.qurani.presentation.theme.mainTextColor
 import kotlinx.coroutines.flow.collect
 
 private const val TAG = "HomeScreen"
+private const val QURAN_PAGE_COUNT = 604
 
 @Preview
 @Composable
@@ -47,9 +48,15 @@ fun HomeScreen(
         modifier = modifier.background(MaterialTheme.colorScheme.background)
     ) {
 
-        var currentPage by remember { mutableIntStateOf(0) }
+        val currentPage by remember { mutableIntStateOf(0) }
 
-        val pageCount = 604
+        var pageCount by remember {
+            mutableIntStateOf(QURAN_PAGE_COUNT)
+        }
+
+        val pageErrNum by remember {
+            mutableIntStateOf(-1)
+        }
 
         val pagerState = rememberPagerState(
             initialPage = currentPage,
@@ -68,6 +75,9 @@ fun HomeScreen(
             }
         }
 
+        val pageErrorStatus = remember {
+            mutableMapOf(0 to "")
+        }
 
         HorizontalPager(
             modifier = Modifier
@@ -78,9 +88,21 @@ fun HomeScreen(
                 ),
             verticalAlignment = Alignment.CenterVertically,
             state = pagerState
-        ) {
+        ) { page ->
 
-            QuranPageComponent(pagerState.currentPage + 1)
+            QuranPageComponent(
+                page + 1,//pagerState.currentPage + 1,
+                //pageErrorStatus[pagerState.currentPage+1] ?: ""
+                pageErrorStatus[page + 1] ?: ""
+            ){ errMsg ->
+
+                pageCount = if(errMsg.isNotEmpty())
+                    page//pagerState.currentPage
+                else
+                    QURAN_PAGE_COUNT
+
+                pageErrorStatus[page] = errMsg
+            }
 
         }
 
